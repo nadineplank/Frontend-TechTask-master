@@ -27,55 +27,64 @@ const ProductList = () => {
   const [error, setError] = React.useState<string | null>(null);
 
   useEffect(() => {
-    var xhr = new XMLHttpRequest();
-
-    xhr.open("POST", "/graphql");
-    xhr.setRequestHeader("Content-Type", "application/json");
-
-    xhr.send(
-      JSON.stringify({
-        query: `{
-        categories: productLists(ids: "156126", locale: de_DE) {
-          name
-          articleCount
-          childrenCategories: childrenProductLists {
-            list {
-              name
-              urlPath
-            }
-          }
-          categoryArticles: articlesList(first: 50) {
-            articles {
-              name
-              variantName
-              prices {
-                currency
-                regular {
-                  value
+    const fetchData = async () => {
+      try {
+        const response = await fetch("/graphql", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            query: `{
+              categories: productLists(ids: "156126", locale: de_DE) {
+                name
+                articleCount
+                childrenCategories: childrenProductLists {
+                  list {
+                    name
+                    urlPath
+                  }
+                }
+                categoryArticles: articlesList(first: 50) {
+                  articles {
+                    name
+                    variantName
+                    prices {
+                      currency
+                      regular {
+                        value
+                      }
+                    }
+                    images(
+                      format: WEBP
+                      maxWidth: 200
+                      maxHeight: 200
+                      limit: 1
+                    ) {
+                      path
+                    }
+                  }
                 }
               }
-              images(
-                format: WEBP
-                maxWidth: 200
-                maxHeight: 200
-                limit: 1
-              ) {
-                path
-              }
-            }
-          }
+            }`,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
-      }`,
-      })
-    );
 
-    xhr.onload = () => {
-      if (xhr.status === 200) {
-        var response = JSON.parse(xhr.response);
-
-        setCategories(response.data.categories);
+        const result = await response.json();
+        setCategories(result.data.categories);
+      } catch (error) {
+        setError(
+          error instanceof Error ? error.message : "An unknown error occurred"
+        );
+      } finally {
+        setLoading(false);
       }
     };
+    fetchData();
   }, []);
 
   const articles = categories.map((category) => {
