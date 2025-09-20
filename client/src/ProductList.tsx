@@ -1,20 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { Category, Article } from "./types";
 import "./ProductList.css";
 
 var intlNumberFormatValues = ["de-DE", "currency", "EUR"];
 
-export var formatter = new Intl.NumberFormat(intlNumberFormatValues[0], {
-  style: intlNumberFormatValues[1],
+export const formatter = new Intl.NumberFormat(intlNumberFormatValues[0], {
+  style: intlNumberFormatValues[1] as "currency",
   currency: intlNumberFormatValues[2],
 });
 
-type State = {
-  categories: Category[];
-};
-
-export var ArticleCard = ({ article }: { article: Article }) => {
+export const ArticleCard = ({ article }: { article: Article }) => {
   return (
     <div className={"article"}>
       <img alt={article.name} src={article.images[0].path} />
@@ -25,12 +21,12 @@ export var ArticleCard = ({ article }: { article: Article }) => {
   );
 };
 
-class ArticleList extends React.Component {
-  state: State = {
-    categories: [],
-  };
+const ProductList = () => {
+  const [categories, setCategories] = React.useState<Category[]>([]);
+  const [loading, setLoading] = React.useState<boolean>(true);
+  const [error, setError] = React.useState<string | null>(null);
 
-  componentDidMount() {
+  useEffect(() => {
     var xhr = new XMLHttpRequest();
 
     xhr.open("POST", "/graphql");
@@ -77,67 +73,63 @@ class ArticleList extends React.Component {
       if (xhr.status === 200) {
         var response = JSON.parse(xhr.response);
 
-        this.setState({ categories: response.data.categories });
+        setCategories(response.data.categories);
       }
     };
-  }
+  }, []);
 
-  render() {
-    var articles = this.state.categories.map((category) => {
-      return category.categoryArticles.articles.map((article) => {
-        return <ArticleCard article={article} />;
-      });
+  const articles = categories.map((category) => {
+    return category.categoryArticles.articles.map((article) => {
+      return <ArticleCard article={article} />;
     });
+  });
 
-    return (
-      <div className={"page"}>
-        <div className={"header"}>
-          <strong>home24</strong>
-          <input placeholder={"Search"} />
-        </div>
-
-        <div className={"sidebar"}>
-          <h3>Kategorien</h3>
-          {this.state.categories.length ? (
-            <ul>
-              {this.state.categories[0].childrenCategories.list.map(
-                ({ name, urlPath }) => {
-                  return (
-                    <li>
-                      <a href={`/${urlPath}`}>{name}</a>
-                    </li>
-                  );
-                }
-              )}
-            </ul>
-          ) : (
-            "Loading..."
-          )}
-        </div>
-
-        <div className={"content"}>
-          {this.state.categories.length ? (
-            <h1>
-              {this.state.categories[0].name}
-              <small> ({this.state.categories[0].articleCount})</small>
-            </h1>
-          ) : (
-            "Loading..."
-          )}
-          <div className={"articles"}>{articles}</div>
-        </div>
-
-        <div className={"footer"}>
-          Alle Preise sind in Euro (€) inkl. gesetzlicher Umsatzsteuer und
-          Versandkosten.
-        </div>
+  return (
+    <div className={"page"}>
+      <div className={"header"}>
+        <strong>home24</strong>
+        <input placeholder={"Search"} />
       </div>
-    );
-  }
-}
+
+      <div className={"sidebar"}>
+        <h3>Kategorien</h3>
+        {categories.length ? (
+          <ul>
+            {categories[0].childrenCategories.list.map(({ name, urlPath }) => {
+              return (
+                <li>
+                  <a href={`/${urlPath}`}>{name}</a>
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          "Loading..."
+        )}
+      </div>
+
+      <div className={"content"}>
+        {categories.length ? (
+          <h1>
+            {categories[0].name}
+            <small> ({categories[0].articleCount})</small>
+          </h1>
+        ) : (
+          "Loading..."
+        )}
+        <div className={"articles"}>{articles}</div>
+      </div>
+
+      <div className={"footer"}>
+        Alle Preise sind in Euro (€) inkl. gesetzlicher Umsatzsteuer und
+        Versandkosten.
+      </div>
+    </div>
+  );
+};
 
 var PLP = () => {
-  return <ArticleList />;
+  return <ProductList />;
 };
 
 export default PLP;
