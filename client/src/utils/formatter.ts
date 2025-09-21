@@ -1,6 +1,10 @@
-const intlNumberFormatValues = ["de-DE", "currency", "EUR"];
+const intlConfig = {
+  locale: "de-DE",
+  style: "currency" as const,
+  currency: "EUR",
+};
 
-export const formatter = new Intl.NumberFormat(intlNumberFormatValues[0], {
-  style: intlNumberFormatValues[1] as "currency",
-  currency: intlNumberFormatValues[2],
+export const formatter = new Intl.NumberFormat(intlConfig.locale, {
+  style: intlConfig.style,
+  currency: intlConfig.currency,
 });
