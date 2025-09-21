@@ -14,11 +14,6 @@ const Card = styled.article`
     box-shadow ${theme.transitions.normal};
   background-color: ${theme.colors.background.white};
   height: 100%;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: ${theme.shadows.md};
-  }
 `;
 
 const ProductImage = styled.img`
@@ -65,7 +60,6 @@ const AddToCartButton = styled.button`
 
   &:hover {
     background-color: ${theme.colors.secondaryHover};
-    transform: translateY(-1px);
   }
 
   &:active {

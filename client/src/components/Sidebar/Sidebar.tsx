@@ -2,12 +2,20 @@ import React, { useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import { Category } from "../../types";
 import { theme } from "../../styles/theme";
-import { useIsMobile } from "../../hooks/useIsMobile";
+import { useBreakpoint } from "../../hooks/useBreakpoint";
 
 const SidebarContainer = styled.aside<{ isOpen: boolean }>`
   grid-area: sidebar;
-  padding: ${theme.spacing.lg};
+  padding: ${theme.spacing.md};
   background-color: ${theme.colors.background.gray};
+  border-radius: ${theme.borderRadius.md};
+  border: 1px solid ${theme.colors.border.default};
+  height: fit-content;
+  margin: 0 ${theme.spacing.lg};
+
+  @media (min-width: ${theme.breakpoints.tablet}) {
+    padding: ${theme.spacing.lg};
+    margin: 0 0 0 ${theme.spacing.lg};
   }
 `;
 
@@ -16,10 +24,11 @@ const SidebarHeader = styled.div<{ isOpen: boolean }>`
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  margin-bottom: ${theme.spacing.md};
+  margin-bottom: ${(props) => (props.isOpen ? theme.spacing.md : 0)};
 
-  @media (max-width: 768px) {
-    margin-bottom: ${(props) => (props.isOpen ? theme.spacing.md : 0)};
+  @media (min-width: ${theme.breakpoints.desktop}) {
+    margin-bottom: ${theme.spacing.md};
+    cursor: default;
   }
 `;
 
@@ -30,21 +39,21 @@ const SidebarTitle = styled.h3`
 `;
 
 const ToggleButton = styled.button<{ isOpen: boolean }>`
-  display: none;
+  display: block;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: ${theme.spacing.sm};
+  transform: rotate(${(props) => (props.isOpen ? "180deg" : "0deg")});
+  transition: transform 0.3s ease;
 
-  @media (max-width: 768px) {
-    display: block;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: ${theme.spacing.sm};
-    transform: rotate(${(props) => (props.isOpen ? "180deg" : "0deg")});
-    transition: transform 0.3s ease;
+  &::before {
+    content: "▼";
+    color: ${theme.colors.text.primary};
+  }
 
-    &::before {
-      content: "▼";
-      color: ${theme.colors.text.primary};
-    }
+  @media (min-width: ${theme.breakpoints.tablet}) {
+    display: none;
   }
 `;
 
@@ -55,6 +64,11 @@ const CategoryList = styled.ul<{ isOpen: boolean }>`
   max-height: ${(props) => (props.isOpen ? "1000px" : "0")};
   overflow: hidden;
   transition: max-height 0.3s ease-in-out;
+
+  @media (min-width: ${theme.breakpoints.desktop}) {
+    max-height: none;
+    overflow: visible;
+  }
 `;
 
 const CategoryItem = styled.li`
@@ -84,15 +98,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
   categories,
   isLoading = false,
 }) => {
-  const isMobile = useIsMobile();
-  const [isOpen, setIsOpen] = useState(!isMobile);
+  const { isDesktop, isMobileOrTablet } = useBreakpoint();
+  const [isOpen, setIsOpen] = useState(isDesktop);
 
   useEffect(() => {
-    setIsOpen(!isMobile);
-  }, [isMobile]);
+    setIsOpen(isDesktop);
+  }, [isDesktop]);
 
   const toggleSidebar = () => {
-    setIsOpen(!isOpen);
+    if (isMobileOrTablet) {
+      setIsOpen((prev) => !prev);
+    }
   };
 
   return (

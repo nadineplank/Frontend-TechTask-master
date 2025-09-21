@@ -8,12 +8,12 @@ import { theme } from "../../styles/theme";
 const PageContainer = styled.div`
   display: grid;
   grid-gap: 20px;
-  grid-template-columns: 200px 1fr;
+  grid-template-columns: 260px 1fr;
   grid-template-areas:
     "header header"
     "sidebar content"
     "footer footer";
-  margin: 6px;
+  margin: 0;
   min-height: 100vh;
   background-color: ${theme.colors.background.primary};
 
@@ -21,7 +21,7 @@ const PageContainer = styled.div`
     padding: 10px;
   }
 
-  @media (max-width: ${theme.breakpoints.mobile}) {
+  @media (max-width: ${theme.breakpoints.tablet}) {
     grid-template-columns: 1fr;
     grid-template-areas:
       "header"
