@@ -26,7 +26,7 @@ const ProductImage = styled.img`
   height: 200px;
   object-fit: contain;
   margin-bottom: ${theme.spacing.sm};
-  background-color: ${theme.colors.background.lightGray};
+  background-color: ${theme.colors.background.white};
   border-radius: ${theme.borderRadius.sm};
 `;
 
