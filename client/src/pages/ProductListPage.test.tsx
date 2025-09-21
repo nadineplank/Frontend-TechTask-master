@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "@testing-library/react";
-import ProductListPage from "./pages/ProductListPage";
+import ProductListPage from "./ProductListPage";
 
 test("renders the ProductList", () => {
   const { getByText } = render(<ProductListPage />);
