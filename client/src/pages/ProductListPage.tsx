@@ -1,15 +1,17 @@
 // client/src/pages/ProductListPage.tsx
 
-import React from "react";
+import React, { useState } from "react";
 import { useProducts } from "../hooks/useProducts";
 import { Layout } from "../components/Layout/Layout";
 import { ProductList } from "../components/ProductList/ProductList";
 import { LoadingState } from "../components/LoadingState/LoadingState";
 import { ErrorState } from "../components/ErrorState/ErrorState";
 import { Article } from "../types";
+import { Header } from "../components/Header/Header";
 
 const ProductListPageContent: React.FC = () => {
   const { categories, loading, error, refetch } = useProducts();
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleAddToCart = (article: Article) => {
     // TODO: Implement actual cart functionality
@@ -17,7 +19,10 @@ const ProductListPageContent: React.FC = () => {
   };
 
   return (
-    <Layout categories={categories} isLoading={loading}>
+    <Layout
+      categories={categories}
+      header={<Header onSearch={setSearchTerm} searchTerm={searchTerm} />}
+    >
       {loading && <LoadingState message="Loading products..." />}
 
       {error && (
@@ -29,7 +34,11 @@ const ProductListPageContent: React.FC = () => {
       )}
 
       {!loading && !error && categories.length > 0 && (
-        <ProductList category={categories[0]} onAddToCart={handleAddToCart} />
+        <ProductList
+          category={categories[0]}
+          onAddToCart={handleAddToCart}
+          searchTerm={searchTerm}
+        />
       )}
     </Layout>
   );

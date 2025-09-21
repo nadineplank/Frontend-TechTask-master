@@ -1,6 +1,5 @@
 import React, { ReactNode } from "react";
 import styled from "@emotion/styled";
-import { Header } from "../Header/Header";
 import { Sidebar } from "../Sidebar/Sidebar";
 import { Footer } from "../Footer/Footer";
 import { Category } from "../../types";
@@ -41,15 +40,17 @@ interface LayoutProps {
   children: ReactNode;
   categories?: Category[];
   isLoading?: boolean;
+  header?: ReactNode;
 }
 
 export const Layout: React.FC<LayoutProps> = ({
   children,
   categories = [],
+  header,
 }) => {
   return (
     <PageContainer>
-      <Header />
+      {header}
       <Sidebar categories={categories} />
       <Content>{children}</Content>
       <Footer />

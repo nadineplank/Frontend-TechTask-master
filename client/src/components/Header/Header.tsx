@@ -37,11 +37,25 @@ const SearchInput = styled.input`
   }
 `;
 
-export const Header: React.FC = () => {
+interface HeaderProps {
+  onSearch: (searchTerm: string) => void;
+  searchTerm: string;
+}
+
+export const Header: React.FC<HeaderProps> = ({ onSearch, searchTerm }) => {
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    onSearch(event.target.value);
+  };
+
   return (
     <HeaderContainer>
       <Logo>home24</Logo>
-      <SearchInput placeholder="Search" aria-label="Search products" />
+      <SearchInput
+        placeholder="Search"
+        aria-label="Search products"
+        value={searchTerm}
+        onChange={handleSearch}
+      />
     </HeaderContainer>
   );
 };

@@ -54,16 +54,27 @@ const EmptyStateContainer = styled.div`
 interface ProductListProps {
   category: Category;
   onAddToCart?: (article: Article) => void;
+  searchTerm?: string;
 }
 
 export const ProductList: React.FC<ProductListProps> = memo(
-  ({ category, onAddToCart }) => {
+  ({ category, onAddToCart, searchTerm = "" }) => {
     const articles = category.categoryArticles.articles;
 
-    if (articles.length === 0) {
+    const filteredArticles = articles.filter(
+      (article) =>
+        article.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        article.variantName?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    if (filteredArticles.length === 0) {
       return (
         <EmptyStateContainer>
-          <p>No products available in this category.</p>
+          <p>
+            {searchTerm
+              ? `No products found matching "${searchTerm}"`
+              : "No products available in this category."}
+          </p>
         </EmptyStateContainer>
       );
     }
@@ -72,11 +83,11 @@ export const ProductList: React.FC<ProductListProps> = memo(
       <>
         <CategoryTitle>
           {category.name}
-          <ArticleCount>({category.articleCount})</ArticleCount>
+          <ArticleCount>({filteredArticles.length})</ArticleCount>
         </CategoryTitle>
 
         <ArticlesGrid>
-          {articles.map((article, index) => (
+          {filteredArticles.map((article, index) => (
             <ArticleCard
               key={`${article.name}-${article.variantName || index}`}
               article={article}
