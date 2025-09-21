@@ -89,7 +89,7 @@ export const ProductList: React.FC<ProductListProps> = memo(
         <ArticlesGrid>
           {filteredArticles.map((article, index) => (
             <ArticleCard
-              key={`${article.name}-${article.variantName || index}`}
+              key={`${article.name}-${article.variantName}-${index} || index}`}
               article={article}
               onAddToCart={onAddToCart}
             />
