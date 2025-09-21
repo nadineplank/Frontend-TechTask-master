@@ -1,6 +1,6 @@
 export const GET_PRODUCT_LISTING = `
-  query GetProductListing($categoryId: String!, $locale: String!, $limit: Int!) {
-    categories: productLists(ids: $categoryId, locale: $locale) {
+  query GetProductListing($categoryId: [String!]!, $limit: Int!) {
+    categories: productLists(ids: $categoryId, locale: de_DE) {
       name
       articleCount
       childrenCategories: childrenProductLists {
@@ -34,7 +34,6 @@ export const GET_PRODUCT_LISTING = `
 `;
 
 export const DEFAULT_QUERY_VARIABLES = {
-  categoryId: "156126",
-  locale: "de_DE",
+  categoryId: ["156126"],
   limit: 50,
 };
